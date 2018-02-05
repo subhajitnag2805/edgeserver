@@ -6,6 +6,11 @@ const sensorSchema = mongoose.Schema({
     },
     value: [
         {
+            time: {
+                type: String
+            }
+        },
+        {
             bodyTemparature: {
                 type: String
             }

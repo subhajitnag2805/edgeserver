@@ -2,7 +2,7 @@ var express = require('express');
 const SerialPort = require('serialport');
 var mongoose = require('mongoose');
 const Readline = SerialPort.parsers.Readline;
-const port = new SerialPort('/dev/ttyACM1', {
+const port = new SerialPort('/dev/ttyACM0', {
     baudRate: 115200
 });
 
@@ -115,7 +115,7 @@ app.post('/sensorValues', function (request, response) {
     let data = new Sensor();
     data.userId = request.body.userId;
     data.forEach(function (element) {
-        element.value.bodyTemparature = request.body.bodyTemparature;
+        element.value.bodyTemparature = new Date();
 
         element.value.bloodPresure.diastolic = request.body.diastolic;
         element.value.bloodPresure.systolic = request.body.systolic;
@@ -148,6 +148,8 @@ app.put('/updateSensorValues', function (request, response) {
             response.status(404).json(details);
         } else if (res) {
             res.forEach(function (element) {
+                element.value.time = request.body.bodyTemparature;
+
                 element.value.bodyTemparature = request.body.bodyTemparature;
 
                 element.value.bloodPresure.diastolic = request.body.diastolic;
