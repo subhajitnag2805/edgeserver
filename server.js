@@ -95,7 +95,8 @@ io.on('connection', function (client) {
 /**User Login */
 app.get('/login', function (request, response) {
     let userDetails = {};
-    User.find({ _id: request.body.userId }, function (error, result) {
+    let email = request.body.email;
+    User.find({ email: email }, function (error, result) {
         if (error) {
             userDetails.error = true;
             userDetails.message = `User not log in.`;
@@ -115,7 +116,9 @@ app.post('/sensorValues', function (request, response) {
     let data = new Sensor();
     data.userId = request.body.userId;
     data.forEach(function (element) {
-        element.value.bodyTemparature = new Date();
+        element.value.time = new Date();
+
+        element.value.bodyTemparature = request.body.bodyTemparature;
 
         element.value.bloodPresure.diastolic = request.body.diastolic;
         element.value.bloodPresure.systolic = request.body.systolic;
@@ -140,16 +143,13 @@ app.post('/sensorValues', function (request, response) {
 /**Update Sensor value */
 app.put('/updateSensorValues', function (request, response) {
     let details = {};
-    let userId = request.body.userId;
-    Sensor.find({ userId: userId }, function (error, res) {
+    Sensor.find({ _id: request.body.sensorId }, function (error, res) {
         if (error) {
             details.error = true;
-            details.message = `User not find.`;
+            details.message = `Sensor not find.`;
             response.status(404).json(details);
         } else if (res) {
             res.forEach(function (element) {
-                element.value.time = request.body.bodyTemparature;
-
                 element.value.bodyTemparature = request.body.bodyTemparature;
 
                 element.value.bloodPresure.diastolic = request.body.diastolic;
