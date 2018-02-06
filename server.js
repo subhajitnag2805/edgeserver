@@ -89,10 +89,9 @@ app.post('/userRegistration', function (request, response) {
         data.email = request.body.email,
         data.id = request.body.id,
         data.loginTime = request.body.loginTime
-    // data.forEach(function (element) {
-    //     element.value.time = request.body.time;
-    // });
-    data.value[0].time = request.body.time;
+    data.forEach(function (element) {
+        element.time = request.body.time;
+    });
     User.find({ id: id }, function (error, res) {
         if (error) {
             data.save(function (error, result) {
