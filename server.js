@@ -35,6 +35,9 @@ mongoose.connection.on('error', (err) => {
 
 app.use(cors());
 
+//body-parser
+app.use(bodyParser.json());
+
 io.on('connection', function (client) {
     console.log("Socket connected !");
 
