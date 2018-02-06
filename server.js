@@ -81,10 +81,10 @@ app.post('/userRegistration', function (request, response) {
     console.log("User data :");
     console.log(request.body);
     let data = new User({
-        name = request.body.name,
-        email = request.body.email,
-        id = request.body.id,
-        loginTime = request.body.loginTime
+        name : request.body.name,
+        email : request.body.email,
+        id : request.body.id,
+        loginTime : request.body.loginTime
     });
     data.forEach(function (element) {
         element.value.time = request.body.time;
