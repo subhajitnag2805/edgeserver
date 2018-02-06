@@ -92,7 +92,7 @@ app.post('/userRegistration', function (request, response) {
     data.value.forEach(function (element) {
         element.time = request.body.time;
     });
-    User.find({ id: id }, function (error, res) {
+    User.find({ id: request.body.id }, function (error, res) {
         if (error) {
             data.save(function (error, result) {
                 if (error) {
