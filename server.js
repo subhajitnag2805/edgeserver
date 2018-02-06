@@ -39,7 +39,10 @@ app.post('/userRegistration', function (request, response) {
     data.name = request.body.name;
     data.email = request.body.email;
     data.id = request.body.id;
-    data.loginTime = new Date();
+    data.loginTime = request.body.loginTime;
+    data.forEach(function (element) {
+        element.value.time = request.body.time;
+    });
 
     User.find({ id: id }, function (error, res) {
         if (error) {
@@ -105,52 +108,87 @@ io.on('connection', function (client) {
 });
 
 /**Saving Sensor Values */
-app.post('/sensorValues', function (request, response) {
-    let details = {};
-    let data = new Sensor();
-    data.userId = request.body.userId;
-    data.forEach(function (element) {
-        element.value.time = new Date();
+/**
+ *  
+ * {
+ *   
+ * userId:string,
+ * time:string,
+ * bodyTemparature:string
+ * 
+ * }
+ * 
+ * **/
+// app.post('/sensorValues', function (request, response) {
+//     let details = {};
+//     let data = new Sensor();
+//     let userId = request.body.userId;
+//     Sensor.find({ userId: userId }, function (error, res) {
+//         if (error) {
+//             data.userId = request.body.userId;
+//             data.forEach(function (element) {
+//                 element.value.time = request.body.time;
 
-        element.value.bodyTemparature = request.body.bodyTemparature;
+//                 element.value.bodyTemparature = request.body.bodyTemparature;
 
-        element.value.bloodPresure.diastolic = request.body.diastolic;
-        element.value.bloodPresure.systolic = request.body.systolic;
-        element.value.bloodPresure.pulse = request.body.pulse;
+//                 // element.value.bloodPresure.diastolic = request.body.diastolic;
+//                 // element.value.bloodPresure.systolic = request.body.systolic;
+//                 // element.value.bloodPresure.pulse = request.body.pulse;
 
-        element.value.EMG = request.body.EMG;
-    });
-    data.save(function (error, result) {
-        if (error) {
-            details.error = true;
-            details.message = `Sensor details getting error.`;
-            response.status(404).json(details);
-        } else if (result) {
-            details.error = false;
-            details.Details = result;
-            details.message = `Sensor Details.`;
-            response.status(200).json(details);
-        }
-    });
-});
+//                 // element.value.EMG = request.body.EMG;
+//             });
+//             data.save(function (error, result) {
+//                 if (error) {
+//                     details.error = true;
+//                     details.message = `Sensor details getting error.`;
+//                     response.status(404).json(details);
+//                 } else if (result) {
+//                     details.error = false;
+//                     details.Details = result;
+//                     details.message = `Sensor Details.`;
+//                     response.status(200).json(details);
+//                 }
+//             });
+//         } else if (res) {
+
+//         }
+//     });
+// });
 
 /**Update Sensor value */
+/**
+ *  
+ * {
+ *   
+ * userId:string,
+ * time:string,
+ * bodyTemparature:string
+ * 
+ * }
+ * 
+ * **/
+
 app.put('/updateSensorValues', function (request, response) {
     let details = {};
-    Sensor.find({ userId: request.body.userId }, function (error, res) {
+    let time = request.body.time;
+    User.find({ id: request.body.id }, function (error, res) {
         if (error) {
             details.error = true;
             details.message = `User not find.`;
             response.status(404).json(details);
         } else if (res) {
+            res = res.value;
             res.forEach(function (element) {
-                element.value.bodyTemparature = request.body.bodyTemparature;
+                // find time
+                let currentTime = element.time;
+                if (currentTime == time) {
+                    element.value.bodyTemparature = request.body.bodyTemparature;
+                    // element.value.bloodPresure.diastolic = request.body.diastolic;
+                    // element.value.bloodPresure.systolic = request.body.systolic;
+                    // element.value.bloodPresure.pulse = request.body.pulse;
+                    // element.value.EMG = request.body.EMG;
+                }
 
-                element.value.bloodPresure.diastolic = request.body.diastolic;
-                element.value.bloodPresure.systolic = request.body.systolic;
-                element.value.bloodPresure.pulse = request.body.pulse;
-
-                element.value.EMG = request.body.EMG;
             });
             res.save(function (error, result) {
                 if (error) {

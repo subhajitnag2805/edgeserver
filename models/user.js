@@ -12,7 +12,37 @@ const userSchema = mongoose.Schema({
     },
     id: {
         type: String
-    }
+    },
+    value: [
+        {
+            time: {
+                type: String
+            }
+        },
+        {
+            bodyTemparature: {
+                type: String
+            }
+        },
+        {
+            bloodPresure: {
+                diastolic: {
+                    type: String
+                },
+                systolic: {
+                    type: String
+                },
+                pulse: {
+                    type: String
+                }
+            }
+        },
+        {
+            EMG: {
+                type: String
+            }
+        }
+    ]
 });
 
 const User = module.exports = mongoose.model('User', userSchema);

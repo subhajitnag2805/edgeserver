@@ -1,0 +1,9 @@
+{
+    "userid": "12345678",
+    "value": [
+        {
+        "time":1234,
+        "bodyTemperature":"30"
+       }
+    ]
+}
