@@ -19,7 +19,7 @@ let Sensor = require('./models/sensors');
 
 //connect to mongodb
 // mongoose.connect('mongodb://127.0.0.1:27017/Edge');
-mongoose.connect('mongodb://chatUser:password@ds211558.mlab.com:11558/ionic_chat');
+mongoose.connect('mongodb://test:password@ds211558.mlab.com:11558/ionic_chat');
 
 
 //on successful connection
