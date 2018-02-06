@@ -1,7 +1,8 @@
 var express = require('express');
 const SerialPort = require('serialport');
 var mongoose = require('mongoose');
-var cors = require('cors')
+var cors = require('cors');
+var bodyParser = require('body-parser');
 const Readline = SerialPort.parsers.Readline;
 const port = new SerialPort('/dev/ttyACM0', {
     baudRate: 115200
