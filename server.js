@@ -91,31 +91,35 @@ app.post('/userRegistration', function (request, response) {
     data.value.forEach(function (element) {
         element.time = request.body.time;
     });
+
+    // data.save(function (error, result) {
+    //     if (error) {
+    //         userDetails.error = true;
+    //         userDetails.message = `User details not saved.`;
+    //         response.status(404).json(userDetails);
+    //     } else if (result) {
+    //         console.log("User result :", result);
+    //         userDetails.error = false;
+    //         userDetails.userDetails = result;
+    //         userDetails.message = `User Details.`;
+    //         response.status(200).json(userDetails);
+    //     }
+    // });
+
     User.find({ id: request.body.id }, function (error, res) {
-        console.log("res :", res);
         if (error) {
-            data.save(function (error, result) {
-                if (error) {
-                    userDetails.error = true;
-                    userDetails.message = `User details not saved.`;
-                    response.status(404).json(userDetails);
-                } else if (result) {
-                    console.log("User result :", result);
-                    userDetails.error = false;
-                    userDetails.userDetails = result;
-                    userDetails.message = `User Details.`;
-                    response.status(200).json(userDetails);
-                }
-            });
+            console.log("error :", error);
+            // userDetails.error = true;
+            // userDetails.message = `User details not saved.`;
+            // response.status(404).json(userDetails);
         } else if (res) {
-            userDetails.error = false;
-            userDetails.userDetails = res;
-            userDetails.message = `User Details.`;
-            response.status(200).json(userDetails);
+            console.log("res :", res);
+            // userDetails.error = false;
+            // userDetails.userDetails = res;
+            // userDetails.message = `User Details.`;
+            // response.status(200).json(userDetails);
         }
     });
-
-
 });
 
 /**Saving Sensor Values */
