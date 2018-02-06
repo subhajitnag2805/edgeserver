@@ -84,15 +84,15 @@ app.post('/userRegistration', function (request, response) {
     let userDetails = {};
     console.log("User data :");
     console.log(request.body);
-    let data = new User({
-        name : request.body.name,
-        email : request.body.email,
-        id : request.body.id,
-        loginTime : request.body.loginTime
-    });
-    data.forEach(function (element) {
-        element.value.time = request.body.time;
-    });
+    let data = new User();
+    data.name = request.body.name,
+        data.email = request.body.email,
+        data.id = request.body.id,
+        data.loginTime = request.body.loginTime
+    // data.forEach(function (element) {
+    //     element.value.time = request.body.time;
+    // });
+    data.value[0].time = request.body.time;
     User.find({ id: id }, function (error, res) {
         if (error) {
             data.save(function (error, result) {
