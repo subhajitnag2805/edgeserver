@@ -100,6 +100,7 @@ app.post('/userRegistration', function (request, response) {
                     userDetails.message = `User details not saved.`;
                     response.status(404).json(userDetails);
                 } else if (result) {
+                    console.log("User result :", result);
                     userDetails.error = false;
                     userDetails.userDetails = result;
                     userDetails.message = `User Details.`;
