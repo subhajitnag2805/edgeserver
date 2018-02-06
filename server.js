@@ -92,28 +92,28 @@ app.post('/userRegistration', function (request, response) {
         element.time = request.body.time;
     });
 
-    // data.save(function (error, result) {
-    //     if (error) {
-    //         userDetails.error = true;
-    //         userDetails.message = `User details not saved.`;
-    //         response.status(404).json(userDetails);
-    //     } else if (result) {
-    //         console.log("User result :", result);
-    //         userDetails.error = false;
-    //         userDetails.userDetails = result;
-    //         userDetails.message = `User Details.`;
-    //         response.status(200).json(userDetails);
-    //     }
-    // });
-
     User.find({ id: request.body.id }, function (error, res) {
         if (error) {
             console.log("error :", error);
-            // userDetails.error = true;
-            // userDetails.message = `User details not saved.`;
-            // response.status(404).json(userDetails);
+            userDetails.error = true;
+            userDetails.message = `User not saved.`;
+            response.status(404).json(userDetails);
         } else if (res) {
-            console.log("res :", res);
+            if (res.length == 0) {
+                data.save(function (error, result) {
+                    if (error) {
+                        userDetails.error = true;
+                        userDetails.message = `User details not saved.`;
+                        response.status(404).json(userDetails);
+                    } else if (result) {
+                        console.log("User result :", result);
+                        userDetails.error = false;
+                        userDetails.userDetails = result;
+                        userDetails.message = `User Details.`;
+                        response.status(200).json(userDetails);
+                    }
+                });
+            }
             // userDetails.error = false;
             // userDetails.userDetails = res;
             // userDetails.message = `User Details.`;
