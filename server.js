@@ -21,7 +21,6 @@ let Sensor = require('./models/sensors');
 // mongoose.connect('mongodb://127.0.0.1:27017/Edge');
 mongoose.connect('mongodb://test:password@ds211558.mlab.com:11558/ionic_chat');
 
-
 //on successful connection
 mongoose.connection.on('connected', () => {
     console.log('Connected to mongodb!!');
@@ -93,6 +92,7 @@ app.post('/userRegistration', function (request, response) {
         element.time = request.body.time;
     });
     User.find({ id: request.body.id }, function (error, res) {
+        console.log("res :", res);
         if (error) {
             data.save(function (error, result) {
                 if (error) {
