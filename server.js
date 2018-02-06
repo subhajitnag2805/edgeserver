@@ -1,6 +1,7 @@
 var express = require('express');
 const SerialPort = require('serialport');
 var mongoose = require('mongoose');
+var cors = require('cors')
 const Readline = SerialPort.parsers.Readline;
 const port = new SerialPort('/dev/ttyACM0', {
     baudRate: 115200
@@ -30,6 +31,46 @@ mongoose.connection.on('error', (err) => {
     if (err) {
         console.log('Error in db is :' + err);
     }
+});
+
+app.use(cors());
+
+io.on('connection', function (client) {
+    console.log("Socket connected !");
+
+    client.on("start", function (data) {
+        let status = data.status;
+        /**Body Temparature Measurement
+         * Taking 200 as input from frontend 
+         */
+        if (status == "200") {
+            var buffer = new Buffer(1);
+            buffer.writeInt8(100);
+            port.write(buffer);
+        }
+        /**Blood Presure Measurement
+         * Taking 201 as input from frontend 
+         */
+        else if (status == "201") {
+            var buffer = new Buffer(1);
+            buffer.writeInt8(101);
+            port.write(buffer);
+        }
+
+        /**EMG Measurement
+         * Taking 202 as input from frontend 
+         */
+        else if (status == "202") {
+            var buffer = new Buffer(1);
+            buffer.writeInt8(102);
+            port.write(buffer);
+        }
+    });
+
+    /**Getting values from arduino and save value in local server*/
+    parser.on('data', function (data) {
+        client.emit('value', { "value": data });
+    });
 });
 
 /**Routings */
@@ -69,44 +110,6 @@ app.post('/userRegistration', function (request, response) {
     });
 
 
-});
-
-io.on('connection', function (client) {
-    console.log("Socket connected !");
-
-    client.on("start", function (data) {
-        let status = data.status;
-        /**Body Temparature Measurement
-         * Taking 200 as input from frontend 
-         */
-        if (status == "200") {
-            var buffer = new Buffer(1);
-            buffer.writeInt8(100);
-            port.write(buffer);
-        }
-        /**Blood Presure Measurement
-         * Taking 201 as input from frontend 
-         */
-        else if (status == "201") {
-            var buffer = new Buffer(1);
-            buffer.writeInt8(101);
-            port.write(buffer);
-        }
-
-        /**EMG Measurement
-         * Taking 202 as input from frontend 
-         */
-        else if (status == "202") {
-            var buffer = new Buffer(1);
-            buffer.writeInt8(102);
-            port.write(buffer);
-        }
-    });
-
-    /**Getting values from arduino and save value in local server*/
-    parser.on('data', function (data) {
-        client.emit('value', { "value": data });
-    });
 });
 
 /**Saving Sensor Values */
