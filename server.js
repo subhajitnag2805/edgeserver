@@ -38,20 +38,32 @@ app.post('/userRegistration', function (request, response) {
     let data = new User();
     data.name = request.body.name;
     data.email = request.body.email;
+    data.id = request.body.id;
     data.loginTime = new Date();
 
-    data.save(function (error, result) {
+    User.find({ id: id }, function (error, res) {
         if (error) {
-            userDetails.error = true;
-            userDetails.message = `User details not saved.`;
-            response.status(404).json(userDetails);
-        } else if (result) {
+            data.save(function (error, result) {
+                if (error) {
+                    userDetails.error = true;
+                    userDetails.message = `User details not saved.`;
+                    response.status(404).json(userDetails);
+                } else if (result) {
+                    userDetails.error = false;
+                    userDetails.userDetails = result;
+                    userDetails.message = `User Details.`;
+                    response.status(200).json(userDetails);
+                }
+            });
+        } else if (res) {
             userDetails.error = false;
-            userDetails.userDetails = result;
+            userDetails.userDetails = res;
             userDetails.message = `User Details.`;
             response.status(200).json(userDetails);
         }
     });
+
+
 });
 
 io.on('connection', function (client) {
@@ -92,24 +104,6 @@ io.on('connection', function (client) {
     });
 });
 
-/**User Login */
-app.get('/login', function (request, response) {
-    let userDetails = {};
-    let email = request.body.email;
-    User.find({ email: email }, function (error, result) {
-        if (error) {
-            userDetails.error = true;
-            userDetails.message = `User not log in.`;
-            response.status(404).json(userDetails);
-        } else if (result) {
-            userDetails.error = false;
-            userDetails.userDetails = result;
-            userDetails.message = `User Details.`;
-            response.status(200).json(userDetails);
-        }
-    });
-});
-
 /**Saving Sensor Values */
 app.post('/sensorValues', function (request, response) {
     let details = {};
@@ -143,10 +137,10 @@ app.post('/sensorValues', function (request, response) {
 /**Update Sensor value */
 app.put('/updateSensorValues', function (request, response) {
     let details = {};
-    Sensor.find({ _id: request.body.sensorId }, function (error, res) {
+    Sensor.find({ userId: request.body.userId }, function (error, res) {
         if (error) {
             details.error = true;
-            details.message = `Sensor not find.`;
+            details.message = `User not find.`;
             response.status(404).json(details);
         } else if (res) {
             res.forEach(function (element) {
@@ -165,7 +159,7 @@ app.put('/updateSensorValues', function (request, response) {
                     response.status(404).json(details);
                 } else if (result) {
                     details.error = false;
-                    details.Details = res;
+                    details.Details = result;
                     details.message = `Sensor Details.`;
                     response.status(200).json(details);
                 }

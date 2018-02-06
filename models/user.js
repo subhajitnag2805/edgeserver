@@ -9,6 +9,9 @@ const userSchema = mongoose.Schema({
     },
     loginTime: {
         type: String
+    },
+    id: {
+        type: String
     }
 });
 
