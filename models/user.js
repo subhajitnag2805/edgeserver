@@ -16,31 +16,29 @@ const userSchema = mongoose.Schema({
     value: [
         {
             time: {
-                type: String
-            }
-        },
-        {
-            bodyTemparature: {
-                type: String
-            }
-        },
-        {
-            bloodPresure: {
-                diastolic: {
-                    type: String
-                },
-                systolic: {
-                    type: String
-                },
-                pulse: {
-                    type: String
-                }
-            }
-        },
-        {
-            EMG: {
-                type: String
-            }
+					type: String
+					},
+					data:[
+						{
+						bodyTemparature: {
+							type: String
+						},
+						bloodPresure: {
+							diastolic: {
+								type: String
+							},
+							systolic: {
+								type: String
+							},
+							pulse: {
+								type: String
+							}
+						},
+					EMG: {
+						type: String
+						}
+					}
+               ]
         }
     ]
 });

@@ -40,15 +40,19 @@ app.use(bodyParser.json());
 
 io.on('connection', function (client) {
     console.log("Socket connected !");
+    let status;
 
     client.on("start", function (data) {
-        let status = data.status;
+		console.log("Status from frontend :",data.status);
+        status = data.status;
+        console.log("status :",status);
         /**Body Temparature Measurement
          * Taking 200 as input from frontend 
          */
-        if (status == "200") {
+        if (status == "temperature") {
             var buffer = new Buffer(1);
-            buffer.writeInt8(100);
+            console.log(buffer);
+            buffer.writeInt8(1);
             port.write(buffer);
         }
         /**Blood Presure Measurement
@@ -72,7 +76,9 @@ io.on('connection', function (client) {
 
     /**Getting values from arduino and save value in local server*/
     parser.on('data', function (data) {
-        client.emit('value', { "value": data });
+		console.log("Data from arduino :",data);
+        client.emit('value',
+         { "value": data, "status":status });
     });
 });
 
@@ -205,40 +211,58 @@ app.post('/userRegistration', function (request, response) {
 app.put('/updateSensorValues', function (request, response) {
     let details = {};
     let time = request.body.time;
-    User.find({ id: request.body.id }, function (error, res) {
-        if (error) {
-            details.error = true;
-            details.message = `User not find.`;
-            response.status(404).json(details);
-        } else if (res) {
-            res = res.value;
-            res.forEach(function (element) {
-                // find time
-                let currentTime = element.time;
-                if (currentTime == time) {
-                    element.value.push({bodyTemparature:request.body.bodyTemparature});
-                    console.log("element.value :", element.value);
-                    // element.value.bloodPresure.diastolic = request.body.diastolic;
-                    // element.value.bloodPresure.systolic = request.body.systolic;
-                    // element.value.bloodPresure.pulse = request.body.pulse;
-                    // element.value.EMG = request.body.EMG;
-                }
-
-            });
-            res.save(function (error, result) {
-                if (error) {
-                    details.error = true;
-                    details.message = `Sensor value not updated.`;
-                    response.status(404).json(details);
-                } else if (result) {
-                    details.error = false;
-                    details.Details = result;
-                    details.message = `Sensor Details.`;
-                    response.status(200).json(details);
-                }
-            });
-        }
-    });
+    let bodyTemparature=request.body.bodyTemparature;
+    let tempId=request.body.tempId;
+    console.log("sensor values :");
+    console.log(request.body);
+    
+    User.find({id:request.body.id}).then(function(result){
+			for(let i in result){
+					let ro=result[i];
+					
+					console.log("ro :",ro);
+					
+					ro.value.forEach(function(element){
+						console.log("element :",element);
+						
+						let currentTime=element.time;
+						
+						if(time==currentTime){
+							
+							element.data.forEach(function(res){
+								console.log("res is is :",res);
+								
+									if(res._id==tempId){
+										
+									res.remove();
+									
+									}
+		
+								});
+								
+								element.data.push({bodyTemparature:bodyTemparature});	
+							
+							console.log("element.data :",element.data);
+							}
+						});
+						
+						ro.save( (error, result)=> {
+								if (error) {
+									details.error = true;
+									details.message = `Sensor value not updated.`;
+									response.status(404).json(details);
+								} else if (result) {
+									console.log("result is :",result);
+									details.error = false;
+									details.Details = result;
+									details.message = `Sensor Details.`;
+									response.status(200).json(details);
+								}
+							});	
+				}
+				
+				
+		});
 });
 
 const PORT = 7000;
