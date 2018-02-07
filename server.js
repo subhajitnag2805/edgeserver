@@ -83,45 +83,64 @@ app.post('/userRegistration', function (request, response) {
     let userDetails = {};
     console.log("User data :");
     console.log(request.body);
-    let data = new User();
-    data.name = request.body.name,
-        data.email = request.body.email,
-        data.id = request.body.id,
-        data.loginTime = request.body.loginTime
-    data.value.forEach(function (element) {
-        element.time = request.body.time;
-    });
-
-    // data.save(function (error, result) {
-    //     if (error) {
-    //         userDetails.error = true;
-    //         userDetails.message = `User details not saved.`;
-    //         response.status(404).json(userDetails);
-    //     } else if (result) {
-    //         console.log("User result :", result);
-    //         userDetails.error = false;
-    //         userDetails.userDetails = result;
-    //         userDetails.message = `User Details.`;
-    //         response.status(200).json(userDetails);
-    //     }
-    // });
-
     User.find({ id: request.body.id }, function (error, res) {
-        if (error) {
-            console.log("error :", error);
-            // userDetails.error = true;
-            // userDetails.message = `User details not saved.`;
-            // response.status(404).json(userDetails);
-        } else if (res) {
-            console.log("res :", res);
-            // userDetails.error = false;
-            // userDetails.userDetails = res;
-            // userDetails.message = `User Details.`;
-            // response.status(200).json(userDetails);
-        }
-    });
-});
+			if (error) {
+				userDetails.error = true;
+				userDetails.message = `User not saved.`;
+				response.status(404).json(userDetails);
+			} else if (res) {
+				
+				if(res.length==0){
+				
+				        let data = new User();
+						data.name = request.body.name;
+						data.email = request.body.email;
+						data.id = request.body.id;
+						data.loginTime = request.body.loginTime;
+						data.value.push({time:request.body.time})
 
+							data.save(function (error, result) {
+								
+								if (error) {
+									userDetails.error = true;
+									userDetails.message = `User details not saved.`;
+									response.status(404).json(userDetails);
+								} else if (result) {
+									console.log(result);
+									userDetails.error = false;
+									userDetails.userDetails = result;
+									userDetails.message = `User Details.`;
+									response.status(200).json(userDetails);
+								}
+								
+						  });
+						
+				}else{
+					
+					res[0].value.push({time:request.body.time})
+					res[0].loginTime = request.body.loginTime;
+					
+					       res[0].save(function (error, result) {
+							   
+								if (error) {
+									userDetails.error = true;
+									userDetails.message = `User details not saved.`;
+									response.status(404).json(userDetails);
+								} else if (result) {
+									console.log(result);
+									userDetails.error = false;
+									userDetails.userDetails = result;
+									userDetails.message = `User Details.`;
+									response.status(200).json(userDetails);
+								}
+								
+						  });
+
+						 
+			    }
+		}
+	});
+});
 /**Saving Sensor Values */
 /**
  *  
@@ -197,7 +216,8 @@ app.put('/updateSensorValues', function (request, response) {
                 // find time
                 let currentTime = element.time;
                 if (currentTime == time) {
-                    element.value.bodyTemparature = request.body.bodyTemparature;
+                    element.value.push({bodyTemparature:request.body.bodyTemparature});
+                    console.log("element.value :", element.value);
                     // element.value.bloodPresure.diastolic = request.body.diastolic;
                     // element.value.bloodPresure.systolic = request.body.systolic;
                     // element.value.bloodPresure.pulse = request.body.pulse;
